@@ -6,12 +6,25 @@ import { GraduationCap } from "lucide-react";
 import { getCourseProgress } from "@/sanity/lib/lessons/getCourseProgress";
 import { CourseCard } from "@/components/CourseCard";
 
-// Define types for the enrolled course and progress
+// Updated Course type with correct image field structure
 type Course = {
   _id: string;
+  _type: "course"; // Ensure _type is present
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
   title: string;
   description: string;
-  // Add other specific fields as needed
+  price?: number;
+  slug: string | null;
+  image?: { 
+    _type: "image"; 
+    asset?: { _ref: string; _type: "reference"; _weak?: boolean }; 
+    hotspot?: { x: number; y: number; height: number; width: number };
+    crop?: { top: number; bottom: number; left: number; right: number };
+  } | undefined;
+  category: { _id: string; title: string } | null;
+  instructor: { name: string } | null;
 };
 
 type EnrolledCourse = {
