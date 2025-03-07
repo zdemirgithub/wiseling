@@ -66,19 +66,16 @@ type Course = {
   } | null;
 };
 
-// Define the params structure for search page
-type SearchParams = {
-  term: string;
+// Using the proper type signature for Next.js 15
+type Props = {
+  params: {
+    term: string;
+  };
+  searchParams: Record<string, string | string[] | undefined>;
 };
 
-// Define the props structure for the search page component
-type SearchPageProps = {
-  params: SearchParams;
-  searchParams?: Record<string, string | string[]>;
-};
-
-export default async function SearchPage({ params }: SearchPageProps) {
-  const { term } = params;
+export default async function SearchPage(props: Props) {
+  const { term } = props.params;
   const decodedTerm = decodeURIComponent(term);
   const courses: Course[] = await searchCourses(decodedTerm);
 
