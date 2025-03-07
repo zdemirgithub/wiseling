@@ -9,7 +9,7 @@ import { CourseCard } from "@/components/CourseCard";
 // Updated Course type with correct image field structure
 type Course = {
   _id: string;
-  _type: "course"; // Ensure _type is present
+  _type: "course";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -17,14 +17,34 @@ type Course = {
   description: string;
   price?: number;
   slug: string | null;
-  image?: { 
-    _type: "image"; 
-    asset?: { _ref: string; _type: "reference"; _weak?: boolean }; 
+  image?: {
+    _type: "image";
+    asset?: { _ref: string; _type: "reference"; _weak?: boolean };
     hotspot?: { _type: "sanity.imageHotspot"; x: number; y: number; height: number; width: number };
     crop?: { _type: "sanity.imageCrop"; top: number; bottom: number; left: number; right: number };
   } | undefined;
-  category: { _id: string; _type: "category"; _createdAt: string; _updatedAt: string; _rev: string; name?: string; slug?: { _type: "slug"; current: string }; description?: string; icon?: string; color?: string } | null;
-  instructor: { name: string } | null;
+  category: {
+    _id: string;
+    _type: "category";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name?: string;
+    slug?: { _type: "slug"; current: string };
+    description?: string;
+    icon?: string;
+    color?: string;
+  } | null;
+  instructor: {
+    _id: string;
+    _type: "instructor";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name: string;
+    bio?: string;
+    photo?: { _type: "image"; asset?: { _ref: string; _type: "reference" }; hotspot?: { x: number; y: number; height: number; width: number } };
+  } | null;
 };
 
 type EnrolledCourse = {
@@ -33,7 +53,7 @@ type EnrolledCourse = {
 
 type CourseWithProgress = {
   course: Course;
-  progress: number; // Adjust based on the actual type of progress
+  progress: number;
 };
 
 export default async function MyCoursesPage() {
@@ -43,6 +63,7 @@ export default async function MyCoursesPage() {
     return redirect("/");
   }
 
+  // Get enrolled courses for the current user
   const enrolledCourses = await getEnrolledCourses(user.id);
 
   // Get progress for each enrolled course
@@ -52,7 +73,7 @@ export default async function MyCoursesPage() {
       const progress = await getCourseProgress(user.id, course._id);
       return {
         course,
-        progress: progress.courseProgress,
+        progress: progress.courseProgress, // Adjust the actual progress value here
       };
     })
   );
