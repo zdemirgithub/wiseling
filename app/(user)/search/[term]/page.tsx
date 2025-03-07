@@ -66,7 +66,7 @@ type Course = {
   } | null;
 };
 
-// Using the proper type signature for Next.js 15
+// Corrected Props type
 type Props = {
   params: {
     term: string;
