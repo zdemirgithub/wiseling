@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,13 +16,30 @@ interface CoursePageProps {
 
 interface Module {
   _id: string;
-  title: string;
-  lessons?: Lesson[];
+  _type: "module";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string; // `title` is optional
+  lessons: Lesson[] | null; // `lessons` can be an array or `null`
 }
 
 interface Lesson {
   _id: string;
-  title: string;
+  _type: "lesson";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string; // `title` is optional
+  slug?: { current: string } | Slug; // Optional slug
+  description?: string; // Optional description
+  videoUrl?: string; // Optional video URL
+  loomUrl?: string; // Optional Loom URL
+  content?: any[]; // Optional content (adjust type as needed)
+}
+
+interface Slug {
+  current?: string;
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {
@@ -104,7 +122,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                   >
                     <div className="p-4 border-b border-border">
                       <h3 className="font-medium">
-                        Module {index + 1}: {module.title}
+                        Module {index + 1}: {module.title || "Untitled Module"} {/* Handle undefined title */}
                       </h3>
                     </div>
                     <div className="divide-y divide-border">
@@ -120,7 +138,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                             <div className="flex items-center gap-3 text-foreground">
                               <BookOpen className="h-4 w-4 text-muted-foreground" />
                               <span className="font-medium">
-                                {lesson.title}
+                                {lesson.title || "Untitled Lesson"} {/* Handle undefined title */}
                               </span>
                             </div>
                           </div>
