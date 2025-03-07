@@ -6,6 +6,23 @@ import { GraduationCap } from "lucide-react";
 import { getCourseProgress } from "@/sanity/lib/lessons/getCourseProgress";
 import { CourseCard } from "@/components/CourseCard";
 
+// Define types for the enrolled course and progress
+type Course = {
+  _id: string;
+  title: string;
+  description: string;
+  // Add other specific fields as needed
+};
+
+type EnrolledCourse = {
+  course: Course;
+};
+
+type CourseWithProgress = {
+  course: Course;
+  progress: number; // Adjust based on the actual type of progress
+};
+
 export default async function MyCoursesPage() {
   const user = await currentUser();
 
@@ -16,8 +33,8 @@ export default async function MyCoursesPage() {
   const enrolledCourses = await getEnrolledCourses(user.id);
 
   // Get progress for each enrolled course
-  const coursesWithProgress = await Promise.all(
-    enrolledCourses.map(async ({ course }) => {
+  const coursesWithProgress: (CourseWithProgress | null)[] = await Promise.all(
+    enrolledCourses.map(async ({ course }: EnrolledCourse) => {
       if (!course) return null;
       const progress = await getCourseProgress(user.id, course._id);
       return {
