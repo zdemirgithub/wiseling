@@ -73,7 +73,7 @@ interface SearchPageProps {
 }
 
 export default async function SearchPage({ params }: SearchPageProps) {
-  const { term } = params; // params is an object, not a Promise
+  const { term } = params; // No need to await params since it's not a Promise
   const decodedTerm = decodeURIComponent(term);
   const courses: Course[] = await searchCourses(decodedTerm);
 
