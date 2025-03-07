@@ -66,14 +66,19 @@ type Course = {
   } | null;
 };
 
-interface SearchPageProps {
-  params: {
-    term: string;
-  };
-}
+// Define the params structure for search page
+type SearchParams = {
+  term: string;
+};
+
+// Define the props structure for the search page component
+type SearchPageProps = {
+  params: SearchParams;
+  searchParams?: Record<string, string | string[]>;
+};
 
 export default async function SearchPage({ params }: SearchPageProps) {
-  const { term } = params; // No need to await params since it's not a Promise
+  const { term } = params;
   const decodedTerm = decodeURIComponent(term);
   const courses: Course[] = await searchCourses(decodedTerm);
 
