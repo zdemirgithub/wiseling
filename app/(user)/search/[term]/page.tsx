@@ -1,83 +1,17 @@
 import { Search } from "lucide-react";
 import { CourseCard } from "@/components/CourseCard";
 import { searchCourses } from "@/sanity/lib/courses/searchCourses";
-import { internalGroqTypeReferenceTo, SanityImageCrop, SanityImageHotspot, Slug } from "@/sanity.types";
 
-// Define the Course type
-type Course = {
-  _id: string;
-  _type: "course";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  price?: number;
-  slug: string | null;
-  description?: string;
-  image?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  category: {
-    _id: string;
-    _type: "category";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    name?: string;
-    slug?: Slug;
-    description?: string;
-    icon?: string;
-    color?: string;
-  } | null;
-  modules?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "module";
-  }>;
-  instructor: {
-    _id: string;
-    _type: "instructor";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    name?: string;
-    bio?: string;
-    photo?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-  } | null;
-};
-
-// Corrected Props type
-type Props = {
-  params: {
+interface SearchPageProps {
+  params: Promise<{
     term: string;
-  };
-  searchParams: Record<string, string | string[] | undefined>;
-};
+  }>;
+}
 
-export default async function SearchPage(props: Props) {
-  const { term } = props.params;
+export default async function SearchPage({ params }: SearchPageProps) {
+  const { term } = await params;
   const decodedTerm = decodeURIComponent(term);
-  const courses: Course[] = await searchCourses(decodedTerm);
+  const courses = await searchCourses(decodedTerm);
 
   return (
     <div className="h-full pt-16">
@@ -102,7 +36,7 @@ export default async function SearchPage(props: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course: Course) => (
+            {courses.map((course) => (
               <CourseCard
                 key={course._id}
                 course={course}
