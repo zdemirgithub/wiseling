@@ -20,10 +20,10 @@ type Course = {
   image?: { 
     _type: "image"; 
     asset?: { _ref: string; _type: "reference"; _weak?: boolean }; 
-    hotspot?: { x: number; y: number; height: number; width: number };
-    crop?: { top: number; bottom: number; left: number; right: number };
+    hotspot?: { _type: "sanity.imageHotspot"; x: number; y: number; height: number; width: number };
+    crop?: { _type: "sanity.imageCrop"; top: number; bottom: number; left: number; right: number };
   } | undefined;
-  category: { _id: string; title: string } | null;
+  category: { _id: string; _type: "category"; _createdAt: string; _updatedAt: string; _rev: string; name?: string; slug?: { _type: "slug"; current: string }; description?: string; icon?: string; color?: string } | null;
   instructor: { name: string } | null;
 };
 
