@@ -6,102 +6,23 @@ import { GraduationCap } from "lucide-react";
 import { getCourseProgress } from "@/sanity/lib/lessons/getCourseProgress";
 import { CourseCard } from "@/components/CourseCard";
 
-type Course = {
-  _id: string;
-  _type: "course";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title: string;
-  description: string;
-  price?: number;
-  slug: string | null;
-  image?: {
-    _type: "image";
-    asset?: { _ref: string; _type: "reference"; _weak?: boolean };
-    hotspot?: {
-      _type: "sanity.imageHotspot";
-      x: number;
-      y: number;
-      height: number;
-      width: number;
-    };
-    crop?: {
-      _type: "sanity.imageCrop";
-      top: number;
-      bottom: number;
-      left: number;
-      right: number;
-    };
-  };
-  category: {
-    _id: string;
-    _type: "category";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    name?: string;
-    slug?: { _type: "slug"; current: string };
-    description?: string;
-    icon?: string;
-    color?: string;
-  } | null;
-  instructor: {
-    _id: string;
-    _type: "instructor";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    name: string;
-    bio?: string;
-    photo?: {
-      _type: "image";
-      asset?: { _ref: string; _type: "reference"; _weak?: boolean };
-      hotspot?: {
-        _type: "sanity.imageHotspot";
-        x: number;
-        y: number;
-        height: number;
-        width: number;
-      };
-      crop?: {
-        _type: "sanity.imageCrop";
-        top: number;
-        bottom: number;
-        left: number;
-        right: number;
-      };
-    };
-  } | null;
-};
-
-type EnrolledCourse = {
-  course: Course;
-};
-
-type CourseWithProgress = {
-  course: Course;
-  progress: number;
-};
-
 export default async function MyCoursesPage() {
   const user = await currentUser();
 
   if (!user?.id) {
-    return redirect("/"); // Redirect to homepage if the user is not authenticated
+    return redirect("/");
   }
 
-  // Get the enrolled courses for the current user
   const enrolledCourses = await getEnrolledCourses(user.id);
 
-  // Get the progress for each enrolled course
-  const coursesWithProgress: (CourseWithProgress | null)[] = await Promise.all(
-    enrolledCourses.map(async ({ course }: EnrolledCourse) => {
+  // Get progress for each enrolled course
+  const coursesWithProgress = await Promise.all(
+    enrolledCourses.map(async ({ course }) => {
       if (!course) return null;
       const progress = await getCourseProgress(user.id, course._id);
       return {
         course,
-        progress: progress.courseProgress ?? 0, // Ensure progress defaults to 0 if undefined
+        progress: progress.courseProgress,
       };
     })
   );
@@ -139,7 +60,7 @@ export default async function MyCoursesPage() {
                   key={item.course._id}
                   course={item.course}
                   progress={item.progress}
-                  href={`/dashboard/courses/${item.course.slug}`} // Using slug for dynamic routing
+                  href={`/dashboard/courses/${item.course._id}`}
                 />
               );
             })}
